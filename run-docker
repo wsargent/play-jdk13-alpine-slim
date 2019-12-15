@@ -1,0 +1,6 @@
+
+docker run \
+  -p 9000:9000 \
+  --rm \
+  --env "PLAY_APPLICATION_SECRET=very-long-secret-for-entropy" \
+  play-jdk13-alpine-slim:latest
