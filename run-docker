@@ -1,6 +1,10 @@
+#!/usr/bin/env bash
 
 docker run \
   -p 9000:9000 \
+  -p 8778:8778 \
   --rm \
   --env "PLAY_APPLICATION_SECRET=very-long-secret-for-entropy" \
+  --env "LOG_DIR=/opt/docker/logs" \
+  --mount type=bind,source="$(pwd)/logs",target=/opt/docker/logs \
   play-jdk13-alpine-slim:latest
