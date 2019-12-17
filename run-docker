@@ -6,5 +6,7 @@ docker run \
   --rm \
   --env "PLAY_APPLICATION_SECRET=very-long-secret-for-entropy" \
   --env "LOG_DIR=/opt/docker/logs" \
-  --mount type=bind,source="$(pwd)/logs",target=/opt/docker/logs \
   play-jdk13-alpine-slim:latest
+
+# Works differently on different platforms, don't have this working on Linux yet
+# --mount type=bind,source="$(pwd)/logs",target=/opt/docker/logs

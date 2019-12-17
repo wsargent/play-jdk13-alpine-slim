@@ -16,6 +16,7 @@ lazy val root = (project in file("."))
     sources in (Compile, doc) := Seq.empty,
     publishArtifact in (Compile, packageDoc) := false,
 
+    // JMX access only through running hawt.io, no JMX over RMI
     // https://jolokia.org/reference/html/agents.html#agents-jvm
     // https://mvnrepository.com/artifact/org.jolokia/jolokia-agent-jvm
     javaAgents += JavaAgent( "org.jolokia" % "jolokia-agent-jvm" % "2.0.0-M3" classifier "agent", arguments = "host=0.0.0.0,port=8778"),
@@ -30,7 +31,7 @@ lazy val root = (project in file("."))
     dockerExposedPorts ++= Seq(9000, 8778),
 
     // Point the Play logs at the right place.
-    Docker / defaultLinuxLogsLocation := (Docker / defaultLinuxInstallLocation).value + "/logs",
+    Docker / defaultLinuxLogsLocation := "/opt/docker/logs",
     dockerExposedVolumes := Seq((Docker / defaultLinuxLogsLocation).value),
 
     // Always use latest tag
@@ -48,6 +49,7 @@ lazy val root = (project in file("."))
 
     // Use the fancy new GC in JDK 13
     javaOptions in Universal ++= Seq(
+      "-Djdk.serialFilter='!*'",   // blacklist all java serialization
       "-J-Xmx512m",
       "-J-Xms512m",
       "-J-XX:+UnlockExperimentalVMOptions",
