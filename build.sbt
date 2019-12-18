@@ -31,7 +31,7 @@ lazy val root = (project in file("."))
     dockerExposedPorts ++= Seq(9000, 8778),
 
     // Point the Play logs at the right place.
-    Docker / defaultLinuxLogsLocation := "/opt/docker/logs",
+    Docker / defaultLinuxLogsLocation := (Docker / defaultLinuxInstallLocation).value + "/logs",
     dockerExposedVolumes := Seq((Docker / defaultLinuxLogsLocation).value),
 
     // Always use latest tag
