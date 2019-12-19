@@ -42,6 +42,23 @@ libraryDependencies += "jakarta.xml.bind" % "jakarta.xml.bind-api" % "2.3.2",
 ),
 ```
 
+## n1gr3d0
+
+I asked on Reddit and n1gr3d0 -- who I think is [nigredo-tori](https://github.com/nigredo-tori) who works on the [JLink plugin](https://github.com/sbt/sbt-native-packager/pull/1248) -- [chimed in](
+https://www.reddit.com/r/scala/comments/eb5n8z/play_280_is_out_runs_on_jdk_13/fb3lua5?utm_source=share&utm_medium=web2x):
+
+> The whole JPMS/Jakarta transition is one huge mess... The main issue in this particular case is that jdeps/jlink have problems with automatic modules (as in, regular JARs treated as modules), unless they are managed in a very deliberate way, which is hard to do automatically. Jdeps in particular doesn't seem to recognize automatic modules in classpath - they need to be in --module-path. And we can't push all of the classpath to --module-path, either - Scala JAR names like, say, cats-core_2.12-2.0.0 lead to errors.
+> 
+> The result of all of this is that automatic modules aren't really supported in JlinkPlugin. Modules that rely on automatic modules will lead to a failure like you have experienced. Sometimes those modules are made explicit by their maintaners (e.g. jakarta.activation will be a proper module in 1.2.2), or as separate artifacts ("com.jwebmp.thirdparty" % "jakarta.activation" % "0.67.0.12"). However, in your project there is also a com.fasterxml.jackson.module.paranamer module referencing a paranamer automatic module, and I can't see a good solution for this.
+> 
+> Honestly, your best bet at this point would be to just skip the whole jdeps phase of the build. It looks through you classpath, building a list of platform modules that were referenced. So instead you can manually figure out what platform modules you need (I don't recommend adding external modules like jakarta.activation here), and directly set jlinkModules.
+> 
+> In the long term, I think we're gonna have to rewrite the jlinkModules phase using the new JDK APIs instead of using jdeps - but that would require a lot of effort, and I don't have any idea when we'll be able to do that.
+> 
+> Edit: looks like paranamer will be removed from Jackson 3.0 - though I'm not sure how soon that will land.
+
+So that clears that up.
+
 ## Further Reading.
 
 * https://blog.jdriven.com/2017/11/modular-java-9-runtime-docker-alpine/
