@@ -1,4 +1,5 @@
 <configuration>
+
     <jmxConfigurator />
 
     <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
@@ -19,6 +20,9 @@
     </appender>
 
     <logger name="play" level="INFO" />
+
+    <!-- log attempts to do java serialization -->
+    <logger name="java.io.serialization" level="DEBUG" />
 
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
